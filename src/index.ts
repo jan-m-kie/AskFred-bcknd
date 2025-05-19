@@ -2,25 +2,11 @@ import express from 'express';
 import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
 
-
-
-
-
 // Redis connection
-const connection = new IORedis({ maxRetriesPerRequest: null });
-// const connection = new Redis(process.env.REDIS_URL);
+const connection = new Redis(process.env.REDIS_URL);
 
 // BullMQ Queue
-const worker = new Worker(
-  'foo',
-  async job => {
-    // Will print { foo: 'bar'} for the first job
-    // and { qux: 'baz' } for the second.
-    console.log(job.data);
-  },
-  { connection },
-);
-// const myQueue = new Queue('myQueue', { connection });
+const myQueue = new Queue('myQueue', { connection });
 
 // Express middleware
 app.use(express.json());
