@@ -3,14 +3,14 @@ import { Queue, Worker } from 'bullmq';
 import { Redis } from "@upstash/redis";
 const redis = Redis.fromEnv();
 
-const cacheKey = `item:${itemId}`;
+const getSession = async (key: string) => {
+  const sessionId = await getSessionId();
+  return redis.hget(`s:${sessionId}`, key);
+};
 
-// Check cache
-const cachedItem = await redis.get(cacheKey);
-if (cachedItem) {
-  console.log("Cache hit");
-  return JSON.parse(cachedItem);
-}
+const setSession = async (key: string, value: string) => {
+  const sessionId = await getSessionIdAndCreateIfMissing();
+  const sessionKey = `s:${sessionId}`;
 
 const app = express();
 const port = process.env.PORT || 3000;
