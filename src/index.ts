@@ -11,6 +11,7 @@ const getSession = async (key: string) => {
 const setSession = async (key: string, value: string) => {
   const sessionId = await getSessionIdAndCreateIfMissing();
   const sessionKey = `s:${sessionId}`;
+};
 
 const app = express();
 const port = process.env.PORT || 3000;
