@@ -1,26 +1,26 @@
 import express from 'express';
 import { Queue, Worker } from 'bullmq';
-import { Redis } from "@upstash/redis";
-const redis = Redis.fromEnv();
+import IORedis from 'ioredis';
 
-const getSession = async (key: string) => {
-  const sessionId = await getSessionId();
-  return redis.hget(`s:${sessionId}`, key);
-};
 
-const setSession = async (key: string, value: string) => {
-  const sessionId = await getSessionIdAndCreateIfMissing();
-  const sessionKey = `s:${sessionId}`;
-};
 
-const app = express();
-const port = process.env.PORT || 3000;
+
 
 // Redis connection
-const connection = new Redis(process.env.REDIS_URL);
+const connection = new IORedis({ maxRetriesPerRequest: null });
+// const connection = new Redis(process.env.REDIS_URL);
 
 // BullMQ Queue
-const myQueue = new Queue('myQueue', { connection });
+const worker = new Worker(
+  'foo',
+  async job => {
+    // Will print { foo: 'bar'} for the first job
+    // and { qux: 'baz' } for the second.
+    console.log(job.data);
+  },
+  { connection },
+);
+// const myQueue = new Queue('myQueue', { connection });
 
 // Express middleware
 app.use(express.json());
