@@ -1,6 +1,16 @@
 import express from 'express';
 import { Queue, Worker } from 'bullmq';
-import Redis from 'ioredis';
+import { Redis } from "@upstash/redis";
+const redis = Redis.fromEnv();
+
+const cacheKey = `item:${itemId}`;
+
+// Check cache
+const cachedItem = await redis.get(cacheKey);
+if (cachedItem) {
+  console.log("Cache hit");
+  return JSON.parse(cachedItem);
+}
 
 const app = express();
 const port = process.env.PORT || 3000;
